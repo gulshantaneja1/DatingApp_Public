@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../_services/auth.service';
+import { AlertifyService } from '../_services/alertify.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-nav',
@@ -8,32 +10,47 @@ import { AuthService } from '../_services/auth.service';
 })
 export class NavComponent implements OnInit {
   model: any = {};
+  photoUrl: string;
+  items: string[] = [
+    'The first choice!',
+    'And another choice for you.',
+    'but wait! A third!'
+  ];
 
-  constructor(private authServices: AuthService) {}
+  constructor(
+    public authServices: AuthService,
+    private alertify: AlertifyService ,
+    private router: Router
+  ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.authServices.currentPhotoUrl.subscribe(photoUrl => this.photoUrl = photoUrl);
+  }
 
   login() {
     this.authServices.login(this.model).subscribe(
       (response) => {
-        console.log('Logged in Successfully');
+        this.alertify.success('logged in successfully');
       },
       (error) => {
-        console.log('Failed to login');
+        this.alertify.error(error);
+      },
+      () => {
+        this.router.navigate(['/members']);
       }
-    );
+      );
   }
 
   loggedIn() {
-    const token = localStorage.getItem('token');
-
-    return !!token;
+    return this.authServices.loggedIn();
   }
 
   logout() {
     localStorage.removeItem('token');
-    console.log('Logged out');
+    localStorage.removeItem('user');
+    this.authServices.decodedToken = null;
+    this.authServices.currentUser = null;
+    this.alertify.message('Logged out');
+    this.router.navigate(['/home']);
   }
-
-  
 }

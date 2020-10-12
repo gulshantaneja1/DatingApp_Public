@@ -84,9 +84,12 @@ namespace DatingApp.API.Controllers
 
             var token = tokenHandler.CreateToken(tokenDescription);
 
+            var user = _mapper.Map<UserForListDto>(userFromRepo);
+
             return Ok(new
             {
-                token = tokenHandler.WriteToken(token)
+                token = tokenHandler.WriteToken(token),
+                user
             });
 
 

@@ -11,7 +11,7 @@ namespace DatingApp.API.Helpers
         public static void AddApplicationError(this HttpResponse response, string message)
         {
             response.Headers.Add("Application-Error", message);
-            response.Headers.Add("Application-Control-Expose-Header", "Application_Error");
+            response.Headers.Add("Access-Control-Expose-Headers", "Application_Error");
             response.Headers.Add("Access-Control-Allow-Origin", "*");
         }
 
@@ -28,7 +28,7 @@ namespace DatingApp.API.Helpers
 
             response.Headers.Add("Pagination",
                              JsonConvert.SerializeObject(paginationHeader,camelCaseFormatter));
-            response.Headers.Add("Application-Control-Expose-Header", "Pagination");
+            response.Headers.Add("Access-Control-Expose-Headers", "Pagination");
 
         }
 
