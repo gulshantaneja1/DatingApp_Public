@@ -10,7 +10,7 @@ import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-photo-editor',
   templateUrl: './photo-editor.component.html',
-  styleUrls: ['./photo-editor.component.scss']
+  styleUrls: ['./photo-editor.component.css']
 })
 export class PhotoEditorComponent implements OnInit {
   @Input() photos: Photo[];
@@ -55,7 +55,8 @@ export class PhotoEditorComponent implements OnInit {
         url: res.url,
         dateAdded: res.dateAdded,
         description: res.description,
-        isMain: res.isMain
+        isMain: res.isMain,
+        isApproved: res.isApproved
       };
       this.photos.push(photo);
 

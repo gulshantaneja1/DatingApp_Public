@@ -13,8 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DatingApp.API.Controllers
 {
-    [ServiceFilter(typeof(LogUserActivity))]
-    [Authorize]    
+    [ServiceFilter(typeof(LogUserActivity))]    
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -34,7 +33,7 @@ namespace DatingApp.API.Controllers
 
             var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-            var userFormRepo = await _repo.GetUser(currentUserId);
+            var userFormRepo = await _repo.GetUser(currentUserId, true);
 
             userParams.UserId = currentUserId;
 
@@ -57,7 +56,9 @@ namespace DatingApp.API.Controllers
         [HttpGet("{id}", Name = "GetUser")]
         public async Task<IActionResult> GetUser(int id)
         {
-            var user = await _repo.GetUser(id);
+            var isCurrentUser = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value) == id;
+
+            var user = await _repo.GetUser(id,isCurrentUser);
 
             var userToReturn = _mapper.Map<UserForDetailedDto>(user);
 
@@ -72,7 +73,7 @@ namespace DatingApp.API.Controllers
             if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
 
-            var userFormRepo = await _repo.GetUser(id);
+            var userFormRepo = await _repo.GetUser(id,true);
 
             _mapper.Map(userForUpdateDto, userFormRepo);
 
@@ -97,7 +98,7 @@ namespace DatingApp.API.Controllers
             if(id == recipientId)    
               return BadRequest("You cannot like yourself!");
 
-            if (await _repo.GetUser(recipientId) == null)
+            if (await _repo.GetUser(recipientId,false) == null)
                 return NotFound();
 
             like = new Like
